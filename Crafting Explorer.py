@@ -41,7 +41,7 @@ if "clear_triggered" not in st.session_state:
 def reset_and_clear():
     st.session_state.search_text = ""
     st.session_state.creature_type = "(Any)"
-    st.session_state.show_harvest = False
+    st.session_state.show_harvest = False  # <-- safe here
     st.session_state.clear_triggered = True
 
 # --- Sidebar UI ---
@@ -66,10 +66,6 @@ with st.sidebar:
 
 if st.session_state.clear_triggered:
     st.session_state.clear_triggered = False
-    st.session_state.show_harvest = False
-    st.session_state.creature_type = "(Any)"
-    st.session_state.search_text = ""
-    # Show default Magic Item Table after reset
     st.subheader("🏰 All Magic Items")
     st.dataframe(recipes_df, use_container_width=True)
 
