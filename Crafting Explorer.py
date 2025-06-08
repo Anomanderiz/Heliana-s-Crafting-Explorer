@@ -12,7 +12,7 @@ recipes_df = pd.read_excel(xlsx, sheet_name="Recipes")
 
 # --- UI ---
 st.set_page_config(page_title="Heliana's Crafting Explorer", layout="wide")
-st.title("\ud83c\udf1f Heliana's Crafting Explorer")
+st.title("🌟 Heliana's Crafting Explorer")
 
 # --- Essence Table ---
 st.header("Essence Table")
@@ -58,7 +58,7 @@ if st.session_state.clear_results:
     st.info("Results cleared. Enter new search criteria.")
 
 elif search_text.strip() != "":
-    st.subheader(f"\ud83c\udff0 Magic Items matching '{search_text}'")
+    st.subheader(f"🏰 Magic Items matching '{search_text}'")
 
     # Filter recipes by Name
     recipes_filtered = recipes_df[recipes_df["Name"].str.contains(search_text, case=False, na=False)]
@@ -88,12 +88,12 @@ elif search_text.strip() != "":
 
 elif creature_type != "(Any)":
     # If no text but Creature Type selected, show full Harvest + Recipes for that Creature Type
-    st.subheader(f"\ud83e\udd96 Harvest Table for '{creature_type}'")
+    st.subheader(f"🦖 Harvest Table for '{creature_type}'")
     with st.expander("Show Harvest Table Results", expanded=True):
         harvest_filtered = harvest_df[harvest_df["Creature Type"].str.contains(creature_type, case=False, na=False)]
         st.dataframe(harvest_filtered, use_container_width=True)
 
-    st.subheader(f"\ud83c\udff0 Magic Items using '{creature_type}' Parts")
+    st.subheader(f"🏰 Magic Items using '{creature_type}' Parts")
     with st.expander("Show Magic Item Recipes", expanded=True):
         recipes_filtered = recipes_df[recipes_df["Creature Type"].str.contains(creature_type, case=False, na=False)]
         st.dataframe(recipes_filtered, use_container_width=True)
@@ -102,4 +102,4 @@ else:
 
 # Footer
 st.markdown("---")
-st.caption("Built with \ud83d\ude80 by your assistant")
+st.caption("Built with 🚀 by your assistant")
