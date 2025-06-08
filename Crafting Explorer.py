@@ -41,8 +41,8 @@ if "show_harvest" not in st.session_state:
 def reset_and_clear():
     st.session_state.search_text = ""
     st.session_state.creature_type = "(Any)"
-    st.session_state.show_harvest = False
     st.session_state.clear_triggered = True
+    st.session_state.update({"show_harvest": False})  # safe way to reset checkbox
 
 # --- Sidebar controls ---
 st.sidebar.header("Search Options")
