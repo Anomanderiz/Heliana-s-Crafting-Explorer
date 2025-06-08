@@ -27,65 +27,54 @@ st.dataframe(essences_df, use_container_width=True)
 
 st.markdown("---")
 
-# --- Sidebar state setup ---
+# --- Sidebar search + Reset Filters ---
 if "search_text" not in st.session_state:
     st.session_state.search_text = ""
 if "creature_type" not in st.session_state:
     st.session_state.creature_type = "(Any)"
-if "clear_triggered" not in st.session_state:
-    st.session_state.clear_triggered = False
 if "show_harvest" not in st.session_state:
     st.session_state.show_harvest = False
+if "clear_triggered" not in st.session_state:
+    st.session_state.clear_triggered = False
 
-# --- Reset ---
+# Reset button callback
 def reset_and_clear():
     st.session_state.search_text = ""
     st.session_state.creature_type = "(Any)"
+    st.session_state.show_harvest = False
     st.session_state.clear_triggered = True
-    st.session_state.update({"show_harvest": False})   # Safe reset of checkbox!
 
-# --- Sidebar controls ---
-st.sidebar.header("Search Options")
+# --- Sidebar UI ---
+with st.sidebar:
+    show_harvest = st.checkbox("Show Harvest Table", key="show_harvest")
 
-# --- Reset Button ---
-st.sidebar.markdown("---")
-if st.sidebar.button("🔄 Reset Filters and Clear Results"):
-    reset_and_clear()
+    search_text = st.text_input(
+        "Search Magic Item Name (partial match)", key="search_text"
+    )
 
-# Show Harvest Table checkbox
-st.sidebar.checkbox(
-    "Show Harvest Table",
-    key="show_harvest"
-)
+    creature_types = ["(Any)"] + sorted(recipes_df["Creature Type"].dropna().unique().tolist())
+    creature_type = st.selectbox(
+        "Filter by Creature Type (optional)",
+        creature_types,
+        index=creature_types.index(st.session_state.creature_type),
+        key="creature_type"
+    )
 
-# Text search
-st.sidebar.text_input(
-    "Search Magic Item Name (partial match)",
-    key="search_text"
-)
-
-# Creature type dropdown
-creature_types = ["(Any)"] + sorted(recipes_df["Creature Type"].dropna().unique().tolist())
-st.sidebar.selectbox(
-    "Filter by Creature Type (optional)",
-    creature_types,
-    index=creature_types.index(st.session_state.creature_type),
-    key="creature_type"
-)
+    st.button("🔄 Reset Filters", on_click=reset_and_clear)
 
 # --- Display Results ---
-search_text = st.session_state.search_text
-creature_type = st.session_state.creature_type
 
-# Reset triggered → show full table
 if st.session_state.clear_triggered:
     st.session_state.clear_triggered = False
     st.session_state.show_harvest = False
+    st.session_state.creature_type = "(Any)"
+    st.session_state.search_text = ""
+    # Show default Magic Item Table after reset
     st.subheader("🏰 All Magic Items")
     st.dataframe(recipes_df, use_container_width=True)
 
-# Show Harvest Table
 elif st.session_state.show_harvest:
+    # Show Harvest Table
     st.subheader("🦖 Harvest Table")
     harvest_filtered = harvest_df.copy()
     if creature_type != "(Any)":
@@ -93,10 +82,11 @@ elif st.session_state.show_harvest:
         st.subheader(f"🦖 Harvest Table for '{creature_type}'")
     st.dataframe(harvest_filtered, use_container_width=True)
 
-# Show Magic Items
 else:
+    # Show Magic Items mode
     if search_text.strip() != "":
         st.subheader(f"🏰 Magic Items matching '{search_text}'")
+
         recipes_filtered = recipes_df[recipes_df["Name"].str.contains(search_text, case=False, na=False)]
 
         if creature_type != "(Any)":
