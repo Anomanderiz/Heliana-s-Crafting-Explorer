@@ -1,5 +1,6 @@
 import streamlit as st
 import pandas as pd
+from PIL import Image
 
 # Load Excel
 excel_file = "Heliana's Recipes.xlsx"
@@ -12,7 +13,14 @@ recipes_df = pd.read_excel(xlsx, sheet_name="Recipes")
 
 # --- UI ---
 st.set_page_config(page_title="Heliana's Crafting Explorer", layout="wide")
-st.title("🌟 Heliana's Crafting Explorer")
+
+# Load Heliana image
+heliana_image = Image.open(".streamlit/heliana_logo.png")
+
+# Display as splash / logo
+st.image(heliana_image, width=150)  # you can adjust width for balance
+st.title("Heliana's Crafting Explorer")
+
 
 # --- Essence Table ---
 st.header("Essence Table")
