@@ -1,0 +1,9 @@
+# .streamlit/config.toml
+
+[theme]
+base="light"
+primaryColor="#b08d57" # antique gold / bronze
+backgroundColor="#f8f1e5" # soft parchment
+secondaryBackgroundColor="#e8dcc9" # slightly darker parchment
+textColor="#4b3e2b" # deep brown ink
+font="serif" # classic book-like font
