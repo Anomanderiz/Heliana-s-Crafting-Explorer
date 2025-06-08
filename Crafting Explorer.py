@@ -18,9 +18,8 @@ st.set_page_config(page_title="Heliana's Crafting Explorer", layout="wide")
 heliana_image = Image.open(".streamlit/heliana_logo.png")
 
 # Display as splash / logo
-st.image(heliana_image, width=150)  # you can adjust width for balance
+st.image(heliana_image, width=150)
 st.title("Heliana's Crafting Explorer")
-
 
 # --- Essence Table ---
 st.header("Essence Table")
@@ -28,57 +27,64 @@ st.dataframe(essences_df, use_container_width=True)
 
 st.markdown("---")
 
-# --- Sidebar search + Reset Filters ---
+# --- Sidebar state setup ---
 if "search_text" not in st.session_state:
     st.session_state.search_text = ""
 if "creature_type" not in st.session_state:
     st.session_state.creature_type = "(Any)"
-
-# Flag to trigger clearing results
 if "clear_triggered" not in st.session_state:
     st.session_state.clear_triggered = False
-
-def reset_and_clear():
-    st.session_state.search_text = ""
-    st.session_state.creature_type = "(Any)"
-    st.session_state.clear_triggered = True
-    st.session_state.show_harvest = False
-
-# --- Show Harvest Table checkbox ---
 if "show_harvest" not in st.session_state:
     st.session_state.show_harvest = False
 
+# --- Reset ---
+def reset_and_clear():
+    st.session_state.search_text = ""
+    st.session_state.creature_type = "(Any)"
+    st.session_state.show_harvest = False
+    st.session_state.clear_triggered = True
+
+# --- Sidebar controls ---
+st.sidebar.header("Search Options")
+
+# Reset button first — consistent UX
+if st.sidebar.button("Reset Filters & Clear Results"):
+    reset_and_clear()
+
+# Show Harvest Table checkbox
 st.sidebar.checkbox(
     "Show Harvest Table",
     key="show_harvest"
 )
 
-# --- Search fields ---
+# Text search
 st.sidebar.text_input(
-    "Search Magic Item Name (partial match)", key="search_text"
+    "Search Magic Item Name (partial match)",
+    key="search_text"
 )
 
+# Creature type dropdown
 creature_types = ["(Any)"] + sorted(recipes_df["Creature Type"].dropna().unique().tolist())
 st.sidebar.selectbox(
-    "Filter by Creature Type (optional)", creature_types, index=creature_types.index(st.session_state.creature_type), key="creature_type"
+    "Filter by Creature Type (optional)",
+    creature_types,
+    index=creature_types.index(st.session_state.creature_type),
+    key="creature_type"
 )
 
+# --- Display Results ---
 search_text = st.session_state.search_text
 creature_type = st.session_state.creature_type
 
-# --- Display Results ---
-
+# Reset triggered → show full table
 if st.session_state.clear_triggered:
     st.session_state.clear_triggered = False
-    if st.session_state.show_harvest:
-        st.subheader("🦖 Full Harvest Table")
-        st.dataframe(harvest_df, use_container_width=True)
-    else:
-        st.subheader("🏰 All Magic Items")
-        st.dataframe(recipes_df, use_container_width=True)
+    st.session_state.show_harvest = False
+    st.subheader("🏰 All Magic Items")
+    st.dataframe(recipes_df, use_container_width=True)
 
+# Show Harvest Table
 elif st.session_state.show_harvest:
-    # Show Harvest Table mode
     st.subheader("🦖 Harvest Table")
     harvest_filtered = harvest_df.copy()
     if creature_type != "(Any)":
@@ -86,11 +92,10 @@ elif st.session_state.show_harvest:
         st.subheader(f"🦖 Harvest Table for '{creature_type}'")
     st.dataframe(harvest_filtered, use_container_width=True)
 
+# Show Magic Items
 else:
-    # Show Magic Items mode
     if search_text.strip() != "":
         st.subheader(f"🏰 Magic Items matching '{search_text}'")
-
         recipes_filtered = recipes_df[recipes_df["Name"].str.contains(search_text, case=False, na=False)]
 
         if creature_type != "(Any)":
