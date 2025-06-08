@@ -26,10 +26,14 @@ if "search_text" not in st.session_state:
 if "creature_type" not in st.session_state:
     st.session_state.creature_type = "(Any)"
 
+# Flag to trigger clearing results
+if "clear_triggered" not in st.session_state:
+    st.session_state.clear_triggered = False
 
 def reset_and_clear():
     st.session_state.search_text = ""
     st.session_state.creature_type = "(Any)"
+    st.session_state.clear_triggered = True
 
 st.sidebar.header("Search Options")
 st.sidebar.button("Reset Filters & Clear Results", on_click=reset_and_clear)
@@ -48,7 +52,11 @@ search_text = st.session_state.search_text
 creature_type = st.session_state.creature_type
 
 # --- Display Results ---
-if search_text.strip() != "":
+if st.session_state.clear_triggered:
+    st.session_state.clear_triggered = False
+    st.info("Results cleared. Enter new search criteria.")
+
+elif search_text.strip() != "":
     st.subheader(f"🏰 Magic Items matching '{search_text}'")
 
     # Filter recipes by Name
@@ -61,17 +69,6 @@ if search_text.strip() != "":
     # Show Recipes
     if not recipes_filtered.empty:
         st.dataframe(recipes_filtered, use_container_width=True)
-
-        # Show components needed
-        components_needed = recipes_filtered["Component"].dropna().unique().tolist()
-
-        st.subheader("Monsters that provide required Components")
-        harvest_filtered = harvest_df[harvest_df["Component"].isin(components_needed)]
-
-        if creature_type != "(Any)":
-            harvest_filtered = harvest_filtered[harvest_filtered["Creature Type"].str.contains(creature_type, case=False, na=False)]
-
-        st.dataframe(harvest_filtered, use_container_width=True)
     else:
         st.info("No matching Magic Items found.")
 
