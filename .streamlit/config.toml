@@ -1,9 +1,9 @@
 # .streamlit/config.toml
 
 [theme]
-base="dark"  # The book's style is very much dark mode themed
-primaryColor="#00c0f0"  # vivid cyan (matches cover + internal designs)
-backgroundColor="#121212"  # deep black/gray — not full black to avoid eyestrain
-secondaryBackgroundColor="#1f1f1f"  # dark gray for panels
-textColor="#f8f8f8"  # pale white/gray text for high contrast
-font="serif"  # gives book/fantasy feel instead of modern sans-serif
+base="dark"
+primaryColor="#f6a21e"  # orange-gold text and buttons
+backgroundColor="#3d1b43"  # deep magenta-purple
+secondaryBackgroundColor="#1a0d1d"  # dark for panels / sidebars / dataframe bg
+textColor="#fef3d7"  # pale parchment / light gold text
+font="serif"
