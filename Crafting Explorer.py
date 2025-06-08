@@ -42,10 +42,16 @@ def reset_and_clear():
     st.session_state.search_text = ""
     st.session_state.creature_type = "(Any)"
     st.session_state.clear_triggered = True
+    st.session_state.show_harvest = False
 
-st.sidebar.header("Search Options")
-if st.sidebar.button("Reset Filters & Clear Results"):
-    reset_and_clear()
+# --- Show Harvest Table checkbox ---
+if "show_harvest" not in st.session_state:
+    st.session_state.show_harvest = False
+
+st.sidebar.checkbox(
+    "Show Harvest Table",
+    key="show_harvest"
+)
 
 # --- Search fields ---
 st.sidebar.text_input(
@@ -61,39 +67,48 @@ search_text = st.session_state.search_text
 creature_type = st.session_state.creature_type
 
 # --- Display Results ---
+
 if st.session_state.clear_triggered:
     st.session_state.clear_triggered = False
-    st.subheader("🏰 All Magic Items")
-    st.dataframe(recipes_df, use_container_width=True)
-
-elif search_text.strip() != "":
-    st.subheader(f"🏰 Magic Items matching '{search_text}'")
-
-    # Filter recipes by Name
-    recipes_filtered = recipes_df[recipes_df["Name"].str.contains(search_text, case=False, na=False)]
-
-    # Further filter by Creature Type if selected
-    if creature_type != "(Any)":
-        recipes_filtered = recipes_filtered[recipes_filtered["Creature Type"].str.contains(creature_type, case=False, na=False)]
-
-    # Show Recipes
-    if not recipes_filtered.empty:
-        st.dataframe(recipes_filtered, use_container_width=True)
+    if st.session_state.show_harvest:
+        st.subheader("🦖 Full Harvest Table")
+        st.dataframe(harvest_df, use_container_width=True)
     else:
-        st.info("No matching Magic Items found.")
+        st.subheader("🏰 All Magic Items")
+        st.dataframe(recipes_df, use_container_width=True)
 
-elif creature_type != "(Any)":
-    # If no text but Creature Type selected, show full Harvest + Recipes for that Creature Type
-    st.subheader(f"🦖 Harvest Table for '{creature_type}'")
-    harvest_filtered = harvest_df[harvest_df["Creature Type"].str.contains(creature_type, case=False, na=False)]
+elif st.session_state.show_harvest:
+    # Show Harvest Table mode
+    st.subheader("🦖 Harvest Table")
+    harvest_filtered = harvest_df.copy()
+    if creature_type != "(Any)":
+        harvest_filtered = harvest_filtered[harvest_filtered["Creature Type"].str.contains(creature_type, case=False, na=False)]
+        st.subheader(f"🦖 Harvest Table for '{creature_type}'")
     st.dataframe(harvest_filtered, use_container_width=True)
 
-    st.subheader(f"🏰 Magic Items using '{creature_type}' Parts")
-    recipes_filtered = recipes_df[recipes_df["Creature Type"].str.contains(creature_type, case=False, na=False)]
-    st.dataframe(recipes_filtered, use_container_width=True)
 else:
-    st.subheader("🏰 All Magic Items")
-    st.dataframe(recipes_df, use_container_width=True)
+    # Show Magic Items mode
+    if search_text.strip() != "":
+        st.subheader(f"🏰 Magic Items matching '{search_text}'")
+
+        recipes_filtered = recipes_df[recipes_df["Name"].str.contains(search_text, case=False, na=False)]
+
+        if creature_type != "(Any)":
+            recipes_filtered = recipes_filtered[recipes_filtered["Creature Type"].str.contains(creature_type, case=False, na=False)]
+
+        if not recipes_filtered.empty:
+            st.dataframe(recipes_filtered, use_container_width=True)
+        else:
+            st.info("No matching Magic Items found.")
+
+    elif creature_type != "(Any)":
+        st.subheader(f"🏰 Magic Items using '{creature_type}' Parts")
+        recipes_filtered = recipes_df[recipes_df["Creature Type"].str.contains(creature_type, case=False, na=False)]
+        st.dataframe(recipes_filtered, use_container_width=True)
+
+    else:
+        st.subheader("🏰 All Magic Items")
+        st.dataframe(recipes_df, use_container_width=True)
 
 # Footer
 st.markdown("---")
