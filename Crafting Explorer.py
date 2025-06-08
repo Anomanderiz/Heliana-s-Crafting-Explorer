@@ -42,13 +42,14 @@ def reset_and_clear():
     st.session_state.search_text = ""
     st.session_state.creature_type = "(Any)"
     st.session_state.clear_triggered = True
-    st.session_state.update({"show_harvest": False})  # safe way to reset checkbox
+    st.session_state.update({"show_harvest": False})   # Safe reset of checkbox!
 
 # --- Sidebar controls ---
 st.sidebar.header("Search Options")
 
-# Reset button first — consistent UX
-if st.sidebar.button("Reset Filters & Clear Results"):
+# --- Reset Button ---
+st.sidebar.markdown("---")
+if st.sidebar.button("🔄 Reset Filters and Clear Results"):
     reset_and_clear()
 
 # Show Harvest Table checkbox
