@@ -40,18 +40,14 @@ if st.sidebar.button("Reset Filters & Clear Results"):
     reset_and_clear()
 
 # --- Search fields ---
-search_text_input = st.sidebar.text_input(
-    "Search Magic Item Name (partial match)", value=st.session_state.search_text
+st.sidebar.text_input(
+    "Search Magic Item Name (partial match)", key="search_text"
 )
 
 creature_types = ["(Any)"] + sorted(recipes_df["Creature Type"].dropna().unique().tolist())
-creature_type_select = st.sidebar.selectbox(
-    "Filter by Creature Type (optional)", creature_types, index=creature_types.index(st.session_state.creature_type)
+st.sidebar.selectbox(
+    "Filter by Creature Type (optional)", creature_types, index=creature_types.index(st.session_state.creature_type), key="creature_type"
 )
-
-# Update session state with current widget values
-st.session_state.search_text = search_text_input
-st.session_state.creature_type = creature_type_select
 
 search_text = st.session_state.search_text
 creature_type = st.session_state.creature_type
