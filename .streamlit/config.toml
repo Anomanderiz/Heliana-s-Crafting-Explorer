@@ -2,8 +2,8 @@
 
 [theme]
 base="dark"
-primaryColor="#f6a21e"  # orange-gold text and buttons
-backgroundColor="#3d1b43"  # deep magenta-purple
-secondaryBackgroundColor="#1a0d1d"  # dark for panels / sidebars / dataframe bg
-textColor="#fef3d7"  # pale parchment / light gold text
+primaryColor="#98c379"  # soft green-gold (good for buttons / highlights)
+backgroundColor="#102418"  # deep forest green background
+secondaryBackgroundColor="#1b3528"  # rich secondary green for panels / sidebars / table bg
+textColor="#e6f4e4"  # pale parchment greenish-white (very readable)
 font="serif"
